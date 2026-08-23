@@ -1,0 +1,19 @@
+{
+  "SchemaVersion": 2,
+  "Trivy": {
+    "Version": "0.74.0"
+  },
+  "ReportID": "01a02ea7-4e30-7319-9e92-8b32b09f436d",
+  "CreatedAt": "2026-08-23T18:15:11.6002031+05:30",
+  "ArtifactID": "sha256:618909837215e6e4991070ff60c59a8fb48e914a6a31b0fd0cbc6a04baa35bbf",
+  "ArtifactName": "C:/Users/Asus/AppData/Local/Temp/security-update-msrl7lso/project",
+  "ArtifactType": "repository",
+  "Metadata": {
+    "RepoURL": "https://github.com/siddarthkathare/Ecommerce.git",
+    "Branch": "main",
+    "Commit": "dbba9e931609cd2cfd15e57cacde987f2552d616",
+    "CommitMsg": "Fix vulnerable requests dependency",
+    "Author": "shubkathare \u003cskkathare04@gmail.com\u003e",
+    "Committer": "shubkathare \u003cskkathare04@gmail.com\u003e"
+  }
+}

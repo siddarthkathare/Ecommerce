@@ -580,7 +580,7 @@ def generate_fallback_findings(trivy_report, source_code):
                     "package_file": f"{target}" + (f" (line {line})" if line else ""),
                     "file": target,
                     "line": line,
-                    "current_version": "[REDACTED SECRET]",
+                    "current_version": "SECRET_KEY = os.environ.get('SECRET_KEY')",
                     "severity": sev,
                     "why_it_matters": f"A hardcoded credential ({title}) was detected in source code. If committed, an attacker can extract it.",
                     "secure_version": "Use environment variables or a key vault",
@@ -589,7 +589,7 @@ def generate_fallback_findings(trivy_report, source_code):
                     # Legacy fields
                     "issue": f"Hardcoded Secret: {title}",
                     "explanation": f"A hardcoded credential ({title}) was detected in source code.",
-                    "vulnerable_code": "[REDACTED SECRET]",
+                    "vulnerable_code": "SECRET_KEY = os.environ.get('SECRET_KEY')",
                     "secure_code": "SECRET_KEY = os.environ.get('SECRET_KEY')",
                     "why_fix_works": "Reading credentials from environment variables prevents secrets from being leaked in version control.",
                     "developer_action": f"Remove the credential from {target}, revoke/rotate the key, and read it via environment variables."
