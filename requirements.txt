@@ -1,0 +1,10 @@
+# Runtime dependencies for the Intelligent Security Analyzer dashboard (app.py).
+# Note: the intentionally OLD/vulnerable requests pin used as a scan demo
+# target lives in vulnerable_target/requirements.txt, not here - this file
+# needs to actually work so the dashboard can run.
+
+flask>=3.0.3
+requests>=2.32.3
+pandas>=2.2.2
+scikit-learn>=1.5.0
+joblib>=1.4.2

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Monitor & Improve — Intelligent Security Analyzer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <div>
+      <h1>📊 Monitor &amp; Improve</h1>
+      <p>Pipeline performance and security insights, over time</p>
+    </div>
+    <a href="/" class="primary-button" style="text-decoration:none;">← Back to Dashboard</a>
+  </header>
+
+  <main>
+
+    <section class="panel">
+      <h2>Lifetime Summary</h2>
+      <div class="stats">
+        <div class="stat neutral"><span>TOTAL SCANS</span><strong>{{ stats.total_scans }}</strong></div>
+        <div class="stat low"><span>GATE PASSED</span><strong>{{ stats.passed }}</strong></div>
+        <div class="stat critical"><span>GATE FAILED</span><strong>{{ stats.failed }}</strong></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Findings per Scan (most recent {{ scans|length }})</h2>
+      <canvas id="trendChart" height="100"></canvas>
+    </section>
+
+    <section class="panel">
+      <h2>Dataset-Driven Learning: Model Status</h2>
+      {% if model_metrics %}
+      <div class="stats">
+        <div class="stat neutral"><span>TRAINING ROWS</span><strong>{{ model_metrics.rows_used }}</strong></div>
+        <div class="stat low"><span>TRAIN ACCURACY</span><strong>{{ (model_metrics.train_accuracy * 100)|round(1) }}%</strong></div>
+        <div class="stat medium"><span>TEST ACCURACY</span><strong>{{ (model_metrics.test_accuracy * 100)|round(1) }}%</strong></div>
+      </div>
+      <p class="subtitle">
+        Every scan below feeds the feedback loop. Run <code>python feedback/retrain.py</code>
+        (or trigger it from Jenkins) to fold that data back into the model and refresh these numbers.
+      </p>
+      {% else %}
+      <p>No trained model found yet. Run <code>python ml_model/train_model.py</code> to train one.</p>
+      {% endif %}
+    </section>
+
+    <section class="panel">
+      <h2>Recent Scan History</h2>
+      <table class="history-table">
+        <thead>
+          <tr><th>When</th><th>Source</th><th>Critical</th><th>High</th><th>Medium</th><th>Low</th><th>Secrets</th><th>Gate</th></tr>
+        </thead>
+        <tbody>
+          {% for s in scans %}
+          <tr>
+            <td>{{ s.when }}</td>
+            <td>{{ s.source }}</td>
+            <td>{{ s.critical }}</td>
+            <td>{{ s.high }}</td>
+            <td>{{ s.medium }}</td>
+            <td>{{ s.low }}</td>
+            <td>{{ s.secrets }}</td>
+            <td class="{{ 'gate-ok' if s.gate_status == 'PASSED' else 'gate-fail' }}">{{ s.gate_status }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="8">No scans recorded yet — run an analysis from the main dashboard.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  const labels = {{ chart_labels|tojson }};
+  const critical = {{ chart_critical|tojson }};
+  const high = {{ chart_high|tojson }};
+  const medium = {{ chart_medium|tojson }};
+  const low = {{ chart_low|tojson }};
+
+  new Chart(document.getElementById("trendChart"), {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [
+        { label: "Critical", data: critical, borderColor: "#dc2626", tension: 0.3 },
+        { label: "High", data: high, borderColor: "#ea580c", tension: 0.3 },
+        { label: "Medium", data: medium, borderColor: "#ca8a04", tension: 0.3 },
+        { label: "Low", data: low, borderColor: "#16a34a", tension: 0.3 },
+      ]
+    },
+    options: { responsive: true, plugins: { legend: { position: "bottom" } } }
+  });
+</script>
+</body>
+</html>

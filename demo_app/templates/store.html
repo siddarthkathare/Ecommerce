@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SecureCart — Demo Store</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px; color: #1a1a2e; }
+  h1 { margin-bottom: 4px; }
+  .tag { color: #16a34a; font-weight: 600; font-size: 14px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-top: 24px; }
+  .card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px; }
+  .price { color: #4338ca; font-weight: 700; margin-top: 8px; }
+  form { margin-top: 40px; border-top: 1px solid #e5e7eb; padding-top: 20px; }
+  input { display: block; width: 100%; padding: 8px; margin: 6px 0 14px; border: 1px solid #d1d5db; border-radius: 6px; }
+  button { background: #4338ca; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; }
+  #msg { margin-top: 10px; font-size: 14px; }
+</style>
+</head>
+<body>
+  <h1>🛒 SecureCart</h1>
+  <p class="tag">Deployed by the Intelligent Secure CI/CD Pipeline</p>
+
+  <div class="grid">
+    {% for p in products %}
+    <div class="card">
+      <strong>{{ p.name }}</strong>
+      <div class="price">${{ "%.2f"|format(p.price) }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <form id="signup-form">
+    <h3>Create an account</h3>
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="password" id="password" placeholder="Password (8+ chars)" required>
+    <button type="submit">Sign up</button>
+    <div id="msg"></div>
+  </form>
+
+  <script>
+    document.getElementById("signup-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      const res = await fetch("/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      document.getElementById("msg").textContent = data.error || "Account created!";
+    });
+  </script>
+</body>
+</html>

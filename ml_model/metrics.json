@@ -1,0 +1,13 @@
+{
+  "rows_used": 42,
+  "train_accuracy": 1.0,
+  "test_accuracy": 0.5556,
+  "feature_importances": {
+    "severity": 0.4613,
+    "is_secret": 0.1502,
+    "has_fix_available": 0.0464,
+    "cve_count": 0.0833,
+    "ecosystem": 0.1198,
+    "exposed_to_network": 0.1391
+  }
+}

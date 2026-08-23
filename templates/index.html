@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligent Security Analyzer</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="app">
+
+    <header class="topbar">
+        <div>
+            <h1>🛡 Intelligent Security Analyzer</h1>
+            <p>AI-powered DevSecOps vulnerability detection and remediation</p>
+        </div>
+
+        <div class="system-status">
+            <span class="dot"></span>
+            Security Engine Ready
+        </div>
+
+        <a href="/monitor" class="primary-button" style="text-decoration:none; margin-left:12px;">
+            📊 Monitor &amp; Improve
+        </a>
+    </header>
+
+
+    <main>
+
+        <!-- INPUT SECTION -->
+        <section class="panel">
+
+            <h2>Analyze Your Application</h2>
+
+            <p class="subtitle">
+                Provide a GitHub repository or upload your project as a ZIP file.
+            </p>
+
+
+            <div class="input-methods">
+
+                <!-- GITHUB -->
+                <div class="method">
+
+                    <div class="method-icon">🔗</div>
+
+                    <h3>GitHub Repository</h3>
+
+                    <p>
+                        Analyze a public or authorized Git repository.
+                    </p>
+
+                    <input
+                        type="text"
+                        id="github-url"
+                        placeholder="https://github.com/user/project.git"
+                    >
+
+                    <button
+                        class="primary-button"
+                        onclick="analyzeGithub()">
+                        Analyze Repository
+                    </button>
+
+                </div>
+
+
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+
+
+                <!-- ZIP -->
+                <div class="method">
+
+                    <div class="method-icon">📁</div>
+
+                    <h3>Upload Project</h3>
+
+                    <p>
+                        Upload your application as a ZIP file.
+                    </p>
+
+                    <label class="upload-box">
+
+                        <input
+                            type="file"
+                            id="project-file"
+                            accept=".zip"
+                            onchange="showFileName()"
+                        >
+
+                        <span id="file-name">
+                            Click to select ZIP
+                        </span>
+
+                    </label>
+
+                    <button
+                        class="primary-button"
+                        onclick="analyzeUpload()">
+                        Analyze Project
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- PIPELINE -->
+        <section class="panel">
+
+            <h2>Security Pipeline</h2>
+
+            <div class="pipeline">
+
+                <div class="pipeline-step active">
+                    <div class="step-icon">📦</div>
+                    <strong>Source</strong>
+                    <span>GitHub / ZIP</span>
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="pipeline-step">
+                    <div class="step-icon">🔍</div>
+                    <strong>SonarQube</strong>
+                    <span>Static Analysis</span>
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="pipeline-step">
+                    <div class="step-icon">🛡</div>
+                    <strong>Trivy</strong>
+                    <span>Vulnerabilities</span>
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="pipeline-step">
+                    <div class="step-icon">🧠</div>
+                    <strong>ML Risk Model</strong>
+                    <span>Dataset-Driven</span>
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="pipeline-step">
+                    <div class="step-icon">🤖</div>
+                    <strong>Gemini AI</strong>
+                    <span>Remediation</span>
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="pipeline-step">
+                    <div class="step-icon">🚦</div>
+                    <strong>Security Gate</strong>
+                    <span>Decision</span>
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="pipeline-step">
+                    <div class="step-icon">🔁</div>
+                    <strong>Feedback Loop</strong>
+                    <span>Retrains Model</span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- STATUS -->
+        <section class="panel">
+
+            <div class="section-header">
+
+                <div>
+                    <h2>Security Analysis</h2>
+                    <p class="subtitle">
+                        Latest scan results
+                    </p>
+                </div>
+
+                <div id="scan-status" class="badge neutral">
+                    Ready
+                </div>
+
+            </div>
+
+
+            <div class="stats">
+
+                <div class="stat critical">
+                    <span>CRITICAL</span>
+                    <strong>{{ findings.critical }}</strong>
+                </div>
+
+                <div class="stat high">
+                    <span>HIGH</span>
+                    <strong>{{ findings.high }}</strong>
+                </div>
+
+                <div class="stat medium">
+                    <span>MEDIUM</span>
+                    <strong>{{ findings.medium }}</strong>
+                </div>
+
+                <div class="stat low">
+                    <span>LOW</span>
+                    <strong>{{ findings.low }}</strong>
+                </div>
+
+                <div class="stat secrets">
+                    <span>SECRETS</span>
+                    <strong>{{ findings.secrets }}</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- AI REMEDIATION -->
+        <section class="panel ai-panel">
+
+            <div class="ai-heading">
+
+                <div class="ai-icon">🤖</div>
+
+                <div>
+                    <h2>AI Developer Assistant</h2>
+
+                    <p class="subtitle">
+                        Gemini analyzes vulnerabilities and suggests secure code.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="ai-placeholder">
+
+                <div class="robot">🤖</div>
+
+                <h3>AI remediation will appear here</h3>
+
+                <p>
+                    Start a security analysis to receive:
+                </p>
+
+                <div class="features">
+
+                    <span>✓ Vulnerability explanation</span>
+                    <span>✓ Vulnerable code</span>
+                    <span>✓ Corrected secure code</span>
+                    <span>✓ Why the fix works</span>
+                    <span>✓ Developer action</span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- SECURITY GATE -->
+        <section class="gate
+            {% if blocked %}
+                gate-blocked
+            {% else %}
+                gate-passed
+            {% endif %}" id="security-gate-card">
+
+            <div>
+
+                <h2 id="gate-title">
+                    {% if blocked %}
+                        🚫 Security Gate: FAILED &nbsp;|&nbsp; Deployment: BLOCKED
+                    {% else %}
+                        ✅ Security Gate: PASSED &nbsp;|&nbsp; Deployment: ALLOWED
+                    {% endif %}
+                </h2>
+
+                <p id="gate-description">
+
+                    {% if blocked %}
+                        CRITICAL or HIGH findings detected. Deployment is BLOCKED according to security policy.
+                    {% else %}
+                        No CRITICAL or HIGH findings detected. Deployment is ALLOWED.
+                    {% endif %}
+
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- AUTOMATED REMEDIATION UPDATE PANEL -->
+        <section class="panel update-panel" id="update-panel" style="display: none;">
+
+            <div class="update-heading">
+                <div class="update-icon">⚡</div>
+                <div>
+                    <h2>Automated Security Remediation</h2>
+                    <p class="subtitle">
+                        Automatically apply AI secure-code recommendations, test, rescan, and update GitHub repository.
+                    </p>
+                </div>
+            </div>
+
+            <div class="update-controls">
+                <div class="token-group">
+                    <label for="github-token"><strong>GitHub Token (PAT):</strong> <span>Optional for public repos / Required for git push access</span></label>
+                    <input type="password" id="github-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx (Optional for push permission)">
+                </div>
+
+                <button class="primary-button update-btn" id="btn-update-project" onclick="updateProject()">
+                    🛠 Update Project
+                </button>
+            </div>
+
+            <!-- PROGRESS INDICATOR -->
+            <div id="update-progress" class="update-progress" style="display: none;">
+                <div class="progress-bar-steps">
+                    <span class="p-step" id="pstep-1">1. Analyzing</span> &rarr;
+                    <span class="p-step" id="pstep-2">2. Generating Fix</span> &rarr;
+                    <span class="p-step" id="pstep-3">3. Updating Files</span> &rarr;
+                    <span class="p-step" id="pstep-4">4. Testing</span> &rarr;
+                    <span class="p-step" id="pstep-5">5. Rescanning</span> &rarr;
+                    <span class="p-step" id="pstep-6">6. Pushing to GitHub</span>
+                </div>
+                <div id="progress-status-msg" class="progress-status-msg">Starting automated remediation pipeline...</div>
+            </div>
+
+            <!-- RESULT CARD -->
+            <div id="update-result" class="update-result-card" style="display: none;"></div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+        <p>
+            Intelligent Secure CI/CD Pipeline •
+            SonarQube • Trivy • Gemini AI • Jenkins
+        </p>
+    </footer>
+
+</div>
+
+
+<script>
+
+function showFileName() {
+
+    const input = document.getElementById("project-file");
+    const label = document.getElementById("file-name");
+
+    if (input.files.length > 0) {
+        label.textContent = input.files[0].name;
+    } else {
+        label.textContent = "Click to select ZIP";
+    }
+}
+
+
+async function analyzeGithub() {
+
+    const url = document
+        .getElementById("github-url")
+        .value
+        .trim();
+
+    const status = document
+        .getElementById("scan-status");
+
+    if (!url) {
+        alert("Please enter a GitHub repository URL.");
+        return;
+    }
+
+    status.textContent = "Scanning...";
+    status.className = "badge scanning";
+
+    try {
+
+        const response = await fetch(
+            "/api/analyze/github",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    url: url
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.error || "Analysis failed."
+            );
+        }
+
+        displayAnalysis(data);
+
+    } catch (error) {
+
+        status.textContent = "Failed";
+        status.className = "badge";
+
+        alert(
+            "Security analysis failed:\n\n" +
+            error.message
+        );
+    }
+}
+
+
+async function analyzeUpload() {
+
+    const input = document
+        .getElementById("project-file");
+
+    const status = document
+        .getElementById("scan-status");
+
+    if (input.files.length === 0) {
+        alert("Please select a ZIP file.");
+        return;
+    }
+
+    const formData = new FormData();
+
+    formData.append(
+        "project",
+        input.files[0]
+    );
+
+    status.textContent = "Scanning...";
+    status.className = "badge scanning";
+
+    try {
+
+        const response = await fetch(
+            "/api/analyze/upload",
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.error || "Analysis failed."
+            );
+        }
+
+        displayAnalysis(data);
+
+    } catch (error) {
+
+        status.textContent = "Failed";
+        status.className = "badge";
+
+        alert(
+            "Security analysis failed:\n\n" +
+            error.message
+        );
+    }
+}
+
+
+function escapeHtml(value) {
+
+    if (value === null || value === undefined) {
+        return "";
+    }
+
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+let currentAnalysisData = null;
+
+function displayAnalysis(data) {
+    currentAnalysisData = data;
+
+    const status = document
+        .getElementById("scan-status");
+
+    status.textContent =
+        data.blocked
+            ? "Security Gate: FAILED"
+            : "Security Gate: PASSED";
+
+    status.className =
+        data.blocked
+            ? "badge"
+            : "badge neutral";
+
+    const gateCard = document.getElementById("security-gate-card");
+    const gateTitle = document.getElementById("gate-title");
+    const gateDesc = document.getElementById("gate-description");
+
+    if (gateCard && gateTitle && gateDesc) {
+        if (data.blocked) {
+            gateCard.className = "gate gate-blocked";
+            gateTitle.innerHTML = "🚫 Security Gate: FAILED &nbsp;|&nbsp; Deployment: BLOCKED";
+            gateDesc.textContent = "CRITICAL or HIGH findings detected. Deployment is BLOCKED according to security policy.";
+        } else {
+            gateCard.className = "gate gate-passed";
+            gateTitle.innerHTML = "✅ Security Gate: PASSED &nbsp;|&nbsp; Deployment: ALLOWED";
+            gateDesc.textContent = "No CRITICAL or HIGH findings detected. Deployment is ALLOWED.";
+        }
+    }
+
+    const findings = data.findings;
+
+    if (document.querySelector(".stat.critical strong")) {
+        document.querySelector(".stat.critical strong").textContent = findings.critical || 0;
+    }
+
+    if (document.querySelector(".stat.high strong")) {
+        document.querySelector(".stat.high strong").textContent = findings.high || 0;
+    }
+
+    if (document.querySelector(".stat.medium strong")) {
+        document.querySelector(".stat.medium strong").textContent = findings.medium || 0;
+    }
+
+    if (document.querySelector(".stat.low strong")) {
+        document.querySelector(".stat.low strong").textContent = findings.low || 0;
+    }
+
+    if (document.querySelector(".stat.secrets strong")) {
+        document.querySelector(".stat.secrets strong").textContent = findings.secrets || 0;
+    }
+
+    // Display Update Panel
+    const updatePanel = document.getElementById("update-panel");
+    if (updatePanel) {
+        updatePanel.style.display = "block";
+    }
+
+    const aiContainer =
+        document.querySelector(".ai-placeholder");
+
+    const aiFindings =
+        data.ai_report ? (data.ai_report.findings || []) : [];
+
+
+    if (aiFindings.length === 0) {
+
+        aiContainer.innerHTML = `
+            <h3>AI analysis completed</h3>
+            <p>No security findings detected. Security Gate: PASSED</p>
+        `;
+
+        return;
+    }
+
+
+    let html = "";
+
+    for (const finding of aiFindings) {
+
+        const severity = (finding.severity || "MEDIUM").toUpperCase();
+        const vulnTitle = finding.vulnerability || finding.issue || "Security Finding";
+        const cveId = finding.cve || "N/A";
+        const pkgFile = finding.package_file || finding.file || "N/A";
+        const currVer = finding.current_version || finding.vulnerable_code || "N/A";
+        const whyMatters = finding.why_it_matters || finding.explanation || "N/A";
+        const secVer = finding.secure_version || finding.secure_code || "N/A";
+        const recFix = finding.recommended_fix || finding.developer_action || "N/A";
+
+        html += `
+            <div class="ai-finding">
+
+                <div class="ai-finding-header">
+
+                    <span class="severity severity-${escapeHtml(severity.toLowerCase())}">
+                        ${escapeHtml(severity)} — ${escapeHtml(vulnTitle)}
+                    </span>
+
+                </div>
+
+                <p>
+                    <strong>CVE:</strong>
+                    ${escapeHtml(cveId)}
+                </p>
+
+                ${finding.ml_priority ? `
+                <p>
+                    <strong>🧠 ML Risk Model:</strong>
+                    ${escapeHtml(finding.ml_priority)} priority
+                    (${Math.round((finding.ml_confidence || 0) * 100)}% confidence)
+                </p>` : ""}
+
+                <p>
+                    <strong>Package / File:</strong>
+                    ${escapeHtml(pkgFile)}
+                </p>
+
+                <p>
+                    <strong>Current Version / Vulnerable Code:</strong>
+                    ${escapeHtml(currVer)}
+                </p>
+
+                <p>
+                    <strong>Why it matters:</strong><br>
+                    ${escapeHtml(whyMatters)}
+                </p>
+
+                <div class="code-section secure">
+
+                    <h4>✅ Secure Version / Recommended Fix Code</h4>
+
+                    <pre><code>${escapeHtml(secVer)}</code></pre>
+
+                </div>
+
+                <p>
+                    <strong>Recommended Fix:</strong><br>
+                    ${escapeHtml(recFix)}
+                </p>
+
+            </div>
+        `;
+    }
+
+    aiContainer.innerHTML = html;
+}
+
+
+async function updateProject() {
+    const githubUrl = document.getElementById("github-url").value.trim();
+    const githubToken = document.getElementById("github-token").value.trim();
+    const btn = document.getElementById("btn-update-project");
+    const progressDiv = document.getElementById("update-progress");
+    const statusMsg = document.getElementById("progress-status-msg");
+    const resultDiv = document.getElementById("update-result");
+
+    if (!githubUrl) {
+        alert("Please provide a GitHub repository URL first.");
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "⌛ Updating Project...";
+    progressDiv.style.display = "block";
+    resultDiv.style.display = "none";
+    resultDiv.innerHTML = "";
+
+    const setStep = (stepNum, text) => {
+        statusMsg.textContent = text;
+        for (let i = 1; i <= 6; i++) {
+            const el = document.getElementById(`pstep-${i}`);
+            if (el) {
+                if (i < stepNum) el.className = "p-step p-done";
+                else if (i === stepNum) el.className = "p-step p-active";
+                else el.className = "p-step";
+            }
+        }
+    };
+
+    setStep(1, "Cloning & Analyzing repository...");
+
+    try {
+        setStep(2, "Generating AI secure-code recommendations...");
+        setTimeout(() => setStep(3, "Automatically modifying affected files..."), 1200);
+        setTimeout(() => setStep(4, "Running build verification & unit tests..."), 2500);
+        setTimeout(() => setStep(5, "Rescanning repository with Trivy..."), 3800);
+        setTimeout(() => setStep(6, "Committing & Pushing fixes to GitHub..."), 5000);
+
+        const response = await fetch("/api/update/github", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                url: githubUrl,
+                github_token: githubToken,
+                ai_report: currentAnalysisData ? currentAnalysisData.ai_report : null
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.error || "Automated update failed.");
+        }
+
+        for (let i = 1; i <= 6; i++) {
+            const el = document.getElementById(`pstep-${i}`);
+            if (el) el.className = "p-step p-done";
+        }
+        statusMsg.textContent = "Automated remediation and push completed successfully!";
+
+        const modifiedList = (data.modified_files || []).map(f => `<code>${escapeHtml(f)}</code>`).join(", ") || "None";
+        const branchStr = data.branch ? ` (Branch: <code>${escapeHtml(data.branch)}</code>)` : "";
+
+        resultDiv.className = "update-result-card success-result";
+        resultDiv.innerHTML = `
+            <h3>✅ SUCCESS: Project Updated</h3>
+            <ul class="result-checklist">
+                <li>✓ Project updated</li>
+                <li>✓ Files changed: ${modifiedList}</li>
+                <li>✓ Tests passed</li>
+                <li>✓ Security scan passed (0 CRITICAL / 0 HIGH vulnerabilities)</li>
+                <li>✓ GitHub repository updated${branchStr}</li>
+            </ul>
+        `;
+        resultDiv.style.display = "block";
+
+    } catch (error) {
+        resultDiv.className = "update-result-card failure-result";
+        resultDiv.innerHTML = `
+            <h3>✗ FAILURE: Update Failed</h3>
+            <ul class="result-checklist">
+                <li>✗ Update failed</li>
+                <li>✗ Changes were not pushed</li>
+                <li>✗ <strong>Reason:</strong> ${escapeHtml(error.message)}</li>
+            </ul>
+        `;
+        resultDiv.style.display = "block";
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "🛠 Update Project";
+    }
+}
+</script>
+
+</body>
+</html>

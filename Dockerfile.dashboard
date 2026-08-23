@@ -1,0 +1,26 @@
+# Containerizes the Intelligent Security Analyzer dashboard (app.py) itself,
+# so the CI/CD pipeline's "AUTOMATED DEPLOYMENT" stage has something
+# consistent and reproducible to ship — matches the diagram's
+# "Uses Docker for secure and consistent deployment".
+
+FROM python:3.12-slim
+
+RUN useradd --create-home appuser \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends git ca-certificates curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Trivy inside the image so scans work without a host-installed binary.
+RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
+    | sh -s -- -b /usr/local/bin
+
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+RUN python ml_model/train_model.py
+
+USER appuser
+EXPOSE 5000
+CMD ["python", "app.py"]

@@ -1,0 +1,26 @@
+version: "3.9"
+
+# Matches "AUTOMATED DEPLOYMENT: Uses Docker for secure and consistent
+# deployment" + "DEPLOYED APPLICATION: Secure and reliable e-commerce
+# application is live" in the architecture diagram.
+
+services:
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    ports:
+      - "5000:5000"
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+    volumes:
+      - ./feedback:/app/feedback
+      - ./monitor:/app/monitor
+
+  ecommerce:
+    build:
+      context: ./demo_app
+    ports:
+      - "5050:5050"
+    environment:
+      - STORE_SECRET_KEY=${STORE_SECRET_KEY:-change-me-in-production}
